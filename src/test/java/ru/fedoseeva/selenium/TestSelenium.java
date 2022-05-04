@@ -25,6 +25,7 @@ public class TestSelenium {
         System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver.exe");
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.manage().window().maximize();
 
         // Переход на страницу "Логин"
@@ -84,35 +85,74 @@ public class TestSelenium {
         }
        list.click();
 
+        WebElement indicateItem = driver.findElement(By.xpath("//span[text() = 'Укажите организацию']"));
+        indicateItem.click();
+
+       WebElement choseCompany = driver.findElement((By.xpath("//div[text() = '(Яндекс)Призрачная Организация Охотников']")));
+       choseCompany.click();
+
+
+        WebElement bookindTicket = driver.findElement(By.xpath("//label[text() = 'Заказ билетов']"));
+        bookindTicket.click();
+
+        WebElement leavingCity = driver.findElement(By.name("crm_business_trip[departureCity]"));
+        leavingCity.click();
+        leavingCity.clear();
+        String depCity = "Россия, Пермь";
+        leavingCity.sendKeys(depCity);
+
+        WebElement arrivalCity = driver.findElement(By.name("crm_business_trip[arrivalCity]"));
+        arrivalCity.click();
+        String arrCity = "Россия, Москва";
+        arrivalCity.sendKeys(arrCity);
+
+        WebElement dateDeparture = driver.findElement(By.xpath("//input[starts-with(@name, 'date_selector_crm_business_trip_departureDatePlan') " +
+                "and @placeholder = 'Укажите дату']"));
+
+        dateDeparture.click();
+        String depDate = "20.05.2022";
+        dateDeparture.sendKeys(depDate);
+
+        dateDeparture.submit();
+
+        WebElement dateArrival = driver.findElement(By.xpath("//input[starts-with(@name, 'date_selector_crm_business_trip_returnDatePlan') " +
+                "and @placeholder = 'Укажите дату']"));
+        String arrDate = "26.05.2022";
+              dateArrival.sendKeys(arrDate);
+        dateArrival.submit();
+
+
+        // Проверка правильности заполнения полей
+        Assert.assertTrue("Не верно подразделение", administrationDepartment.getText().contains("Администрация"));
+        WebElement company = driver.findElement(By.name("crm_business_trip[company]"));
+        try{
+            Thread.sleep(5000);
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
+      //  Assert.assertTrue("Не верна организация", company.equals("(Яндекс)Призрачная Организация Охотников"));
+      //  Assert.assertEquals ("Не верен пункт отправления", depCity,  leavingCity.getAttribute("value"));
+     //   Assert.assertEquals("Не верен пункт прибытия", arrCity, arrCity);
+        scrollToElementJs(dateArrival);
+   //     scrollToElementJs(arrivalCity);
+        Assert.assertEquals("Не верен пункт прибытия", arrCity, arrivalCity.getAttribute("value"));
+      //  Assert.assertTrue("Не верна дата отпраления", dateDeparture.getText().contains(depDate));
+      //  Assert.assertTrue("Не верна дата прибытия", dateArrival.getText().contains(arrDate));
 
         //       driver.quit();
 
     }
-
-
     private void scrollToElementJs(WebElement element) {
+
         JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
         javascriptExecutor.executeScript("arguments[0].scrollIntoView(true);", element);
-    }
-
-    private void waitUtilElementToBeClickable(WebElement element) {
-        wait.until(ExpectedConditions.elementToBeClickable(element));
-    }
-
-    public void fillFields(WebElement element, String value) {
-
-        scrollToElementJs(element);
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
+        try{
+            Thread.sleep(5000);
+        }
+        catch (InterruptedException e){
             e.printStackTrace();
         }
-        waitUtilElementToBeClickable(element);
-        element.click();
-        element.sendKeys(value);
-
-        boolean checkFlag = wait.until(ExpectedConditions.attributeContains(element, "placeholder", value));
-        Assert.assertTrue("Поле было заполнено некорректно", checkFlag);
 
     }
 }
