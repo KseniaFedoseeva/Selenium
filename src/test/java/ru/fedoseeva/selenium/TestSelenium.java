@@ -134,7 +134,7 @@ public class TestSelenium {
 
         // Проверка не заполненных полей
         WebElement listEmploee = driver.findElement(By.xpath("//span[text() = 'Список командируемых сотрудников не может быть пустым']"));
-        listEmploee.isDisplayed();
+       Assert.assertTrue("Отсутствует сообщение о списке командируемых", listEmploee.isDisplayed());
 
     }
 
