@@ -21,9 +21,9 @@ public class TestSelenium {
         System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver.exe");
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
         driver.manage().window().maximize();
-        wait = new WebDriverWait(driver, 10, 1000);
+        wait = new WebDriverWait(driver, 20, 1000);
 
         // Переход на страницу "Логин"
         driver.navigate().to("http://training.appline.ru/user/login");
@@ -63,6 +63,7 @@ public class TestSelenium {
 
         //Создание командировки
         WebElement createBusinessTrip = driver.findElement(By.xpath("//a[@title = 'Создать командировку']"));
+        Assert.assertTrue("Страница не загружена", createBusinessTrip.isDisplayed());
         createBusinessTrip.click();
         WebElement titleCreateBusinessTrip = driver.findElement(By.xpath("//h1[text() = 'Создать командировку']"));
         Assert.assertTrue("Страница не загружена", titleCreateBusinessTrip.isDisplayed() &&
